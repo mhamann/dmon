@@ -1,6 +1,7 @@
 var dmon = (function() {
     var timeframes = [];
     var services = [];
+    var webroot = "";
     
     function updatePing(data) {
         for (var i = 0; i < timeframes.length; ++i) {
@@ -38,12 +39,20 @@ var dmon = (function() {
         }
     };
     
-    $(document).ready(function() {
-        setInterval(function() {
-            $.getJSON('/ping', updatePing);
-            $.getJSON('/server_status', updateServices);
-        }, 30000);
-    });
+    function init(args) {
+    	if (args.webroot !== 'undefined') {
+    		webroot = args.webroot;
+    	}
+    	
+    	$(document).ready(function() {
+	        setInterval(function() {
+	            $.getJSON(webroot + '/ping', updatePing);
+	            $.getJSON(webroot + '/server_status', updateServices);
+	        }, 30000);
+	    });
+    };
+    
+    
 
     return {
         'setTimeframes': function(timeframe_list) {
@@ -53,6 +62,7 @@ var dmon = (function() {
             services = service_list;
         },
         'updatePing': updatePing,
-        'updateServices': updateServices
-    }
+        'updateServices': updateServices,
+        'init': init
+    };
 })();

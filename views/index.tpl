@@ -76,6 +76,7 @@
     <script>
       $(document).foundation();
       $(document).ready(function() {
+      	dmon.init({ webroot: '{{ base_url }}' });
         dmon.setTimeframes({{! timeframes}});
         dmon.updatePing({{! current_ping}});
 
