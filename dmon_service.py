@@ -19,6 +19,7 @@ def update_ping(host):
         print 'Error', err
     else:
         ping_data = {
+            'host': host,
             'timestamp': datetime.datetime.utcnow()
         }
         lines = out.split('\n')
@@ -32,7 +33,7 @@ def update_ping(host):
                 ping_data['rtt'] = float(line.split()[3].split('/')[1])
     
         db.ping.insert(ping_data)
-        db.ping.remove({'timestamp': {'$lt': ping_data['timestamp'] - datetime.timedelta(days=30)}})
+        db.ping.remove({'timestamp': {'$lt': ping_data['timestamp'] - datetime.timedelta(days=30)}, 'host': host})
 
         
 def check_service(name, addr):
@@ -63,5 +64,5 @@ def check_service(name, addr):
 if __name__ == '__main__':
     for service, addr in config.services:
         check_service(service, addr)
-        
-    update_ping(config.ping_host)
+    for host in config.ping_hosts:
+        update_ping(host)
